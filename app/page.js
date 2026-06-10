@@ -60,47 +60,43 @@ export default function Home() {
           <span className="text-xl font-bold text-blue-600">SeekaBW</span>
         </div>
         <div className="flex items-center gap-3">
-  <a
-    href="/login"
-    className="text-sm text-gray-600 hover:text-blue-600"
-  >
-    Login
-  </a>
-
-  <a
-    href="/signup"
-    className="text-sm bg-gray-100 text-gray-700 px-4 py-2 rounded-full font-medium hover:bg-gray-200"
-  >
-    Sign Up
-  </a>
-
- <div className="flex items-center gap-3">
   {user ? (
-    <span className="text-sm text-gray-600">
-      {user.email}
-    </span>
+    <>
+      <span className="text-sm text-gray-600">
+        {user.email}
+      </span>
+
+      <button
+        onClick={handleLogout}
+        className="text-sm bg-red-500 text-white px-4 py-2 rounded-full font-medium hover:bg-red-600"
+      >
+        Logout
+      </button>
+
+      <a
+        href="/register"
+        className="text-sm bg-blue-600 text-white px-4 py-2 rounded-full font-medium hover:bg-blue-700 transition"
+      >
+        List your business
+      </a>
+    </>
   ) : (
     <>
-      <a href="/login" className="text-sm text-gray-600">
+      <a
+        href="/login"
+        className="text-sm text-gray-600 hover:text-blue-600"
+      >
         Login
       </a>
 
       <a
         href="/signup"
-        className="text-sm bg-gray-100 px-4 py-2 rounded-full"
+        className="text-sm bg-gray-100 text-gray-700 px-4 py-2 rounded-full font-medium hover:bg-gray-200"
       >
         Sign Up
       </a>
     </>
   )}
-
-  <a
-    href="/register"
-    className="text-sm bg-blue-600 text-white px-4 py-2 rounded-full"
-  >
-    List your business
-  </a>
-</div>
 </div>
       </nav>
 
