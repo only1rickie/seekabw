@@ -7,28 +7,65 @@ import { auth } from "../lib/firebase";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const login = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
+      setLoading(true);
+
       await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
 
-      alert("Logged in!");
-    } catch (err) {
-      alert(err.message);
+      alert("Logged in successfully!");
+
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={login}>
-      <input type="email" onChange={(e)=>setEmail(e.target.value)} />
-      <input type="password" onChange={(e)=>setPassword(e.target.value)} />
-      <button>Login</button>
-    </form>
+    <main className="min-h-screen flex items-center justify-center bg-[#f8f9ff] p-4">
+      <form
+        onSubmit={handleLogin}
+        className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 w-full max-w-md"
+      >
+        <h1 className="text-2xl font-bold mb-6 text-center">
+          Login
+        </h1>
+
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full border rounded-xl px-4 py-3 mb-4"
+          required
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full border rounded-xl px-4 py-3 mb-4"
+          required
+        />
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-3 rounded-xl font-medium"
+        >
+          {loading ? "Logging in..." : "Login"}
+        </button>
+      </form>
+    </main>
   );
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import { auth } from "./lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "./lib/firebase";
@@ -8,6 +10,7 @@ import { Search, MapPin, Phone, MessageCircle, Star } from "lucide-react";
 const CATEGORIES = ["All", "Beauty & Salons", "Mechanics", "Plumbers", "Electricians", "Caterers", "Tailors", "Supermarkets", "Pharmacies", "Other"];
 
 export default function Home() {
+  const [user, setUser] = useState(null);
   const [businesses, setBusinesses] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,6 +18,13 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState("All");
 
   useEffect(() => {
+    {
+  const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    setUser(currentUser);
+  });
+
+  return () => unsubscribe();
+}
     const fetchBusinesses = async () => {
       const querySnapshot = await getDocs(collection(db, "businesses"));
       const list = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -64,12 +74,33 @@ export default function Home() {
     Sign Up
   </a>
 
+ <div className="flex items-center gap-3">
+  {user ? (
+    <span className="text-sm text-gray-600">
+      {user.email}
+    </span>
+  ) : (
+    <>
+      <a href="/login" className="text-sm text-gray-600">
+        Login
+      </a>
+
+      <a
+        href="/signup"
+        className="text-sm bg-gray-100 px-4 py-2 rounded-full"
+      >
+        Sign Up
+      </a>
+    </>
+  )}
+
   <a
     href="/register"
-    className="text-sm bg-blue-600 text-white px-4 py-2 rounded-full font-medium hover:bg-blue-700 transition"
+    className="text-sm bg-blue-600 text-white px-4 py-2 rounded-full"
   >
     List your business
   </a>
+</div>
 </div>
       </nav>
 
