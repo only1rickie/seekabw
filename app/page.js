@@ -1,10 +1,11 @@
-"use client";
+import { writeFileSync } from "fs";
 
-import { auth } from "./lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+const homePage = `"use client";
+
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "./lib/firebase";
+import { db, auth } from "./lib/firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { Search, MapPin, Phone, MessageCircle, Star } from "lucide-react";
 
 const CATEGORIES = ["All", "Beauty & Salons", "Mechanics", "Plumbers", "Electricians", "Caterers", "Tailors", "Supermarkets", "Pharmacies", "Other"];
@@ -18,13 +19,10 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState("All");
 
   useEffect(() => {
-    {
-  const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-    setUser(currentUser);
-  });
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
 
-  return () => unsubscribe();
-}
     const fetchBusinesses = async () => {
       const querySnapshot = await getDocs(collection(db, "businesses"));
       const list = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -32,7 +30,9 @@ export default function Home() {
       setFiltered(list);
       setLoading(false);
     };
+
     fetchBusinesses();
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -50,6 +50,10 @@ export default function Home() {
     setFiltered(results);
   }, [search, activeCategory, businesses]);
 
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
+
   return (
     <main className="min-h-screen bg-[#f8f9ff]">
       <nav className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-sm">
@@ -60,44 +64,26 @@ export default function Home() {
           <span className="text-xl font-bold text-blue-600">SeekaBW</span>
         </div>
         <div className="flex items-center gap-3">
-  {user ? (
-    <>
-      <span className="text-sm text-gray-600">
-        {user.email}
-      </span>
-
-      <button
-        onClick={handleLogout}
-        className="text-sm bg-red-500 text-white px-4 py-2 rounded-full font-medium hover:bg-red-600"
-      >
-        Logout
-      </button>
-
-      <a
-        href="/register"
-        className="text-sm bg-blue-600 text-white px-4 py-2 rounded-full font-medium hover:bg-blue-700 transition"
-      >
-        List your business
-      </a>
-    </>
-  ) : (
-    <>
-      <a
-        href="/login"
-        className="text-sm text-gray-600 hover:text-blue-600"
-      >
-        Login
-      </a>
-
-      <a
-        href="/signup"
-        className="text-sm bg-gray-100 text-gray-700 px-4 py-2 rounded-full font-medium hover:bg-gray-200"
-      >
-        Sign Up
-      </a>
-    </>
-  )}
-</div>
+          {user ? (
+            <>
+              <span className="text-sm text-gray-600 hidden sm:block">{user.email}</span>
+              <button
+                onClick={handleLogout}
+                className="text-sm bg-red-500 text-white px-4 py-2 rounded-full font-medium hover:bg-red-600 transition"
+              >
+                Logout
+              </button>
+              <a href="/register" className="text-sm bg-blue-600 text-white px-4 py-2 rounded-full font-medium hover:bg-blue-700 transition">
+                List your business
+              </a>
+            </>
+          ) : (
+            <>
+              <a href="/login" className="text-sm text-gray-600 hover:text-blue-600 font-medium">Login</a>
+              <a href="/signup" className="text-sm bg-blue-600 text-white px-4 py-2 rounded-full font-medium hover:bg-blue-700 transition">Sign Up</a>
+            </>
+          )}
+        </div>
       </nav>
 
       <div className="bg-gradient-to-br from-blue-600 to-blue-800 text-white px-6 py-16 text-center">
@@ -187,4 +173,7 @@ export default function Home() {
       </footer>
     </main>
   );
-}
+}`;
+
+writeFileSync("app/page.js", homePage);
+console.log("Done! Home page fixed.");
