@@ -1,5 +1,6 @@
 "use client";
 
+import { auth } from "../lib/firebase";
 import { useState } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../lib/firebase";
@@ -15,14 +16,20 @@ export default function Register() {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = async (data) => {
+    if (!auth.currentUser) {
+  alert("Please login first");
+  return;
+}
     setLoading(true);
     try {
       await addDoc(collection(db, "businesses"), {
-        ...data,
-        rating: 0,
-        verified: false,
-        createdAt: serverTimestamp()
-      });
+  ...data,
+  ownerId: auth.currentUser.uid,
+  ownerEmail: auth.currentUser.email,
+  rating: 0,
+  verified: false,
+  createdAt: serverTimestamp()
+});
       setSubmitted(true);
     } catch (err) {
       alert("Something went wrong. Please try again.");

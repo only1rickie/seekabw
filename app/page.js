@@ -49,9 +49,28 @@ export default function Home() {
           </div>
           <span className="text-xl font-bold text-blue-600">SeekaBW</span>
         </div>
-        <a href="/register" className="text-sm bg-blue-600 text-white px-4 py-2 rounded-full font-medium hover:bg-blue-700 transition">
-          List your business
-        </a>
+        <div className="flex items-center gap-3">
+  <a
+    href="/login"
+    className="text-sm text-gray-600 hover:text-blue-600"
+  >
+    Login
+  </a>
+
+  <a
+    href="/signup"
+    className="text-sm bg-gray-100 text-gray-700 px-4 py-2 rounded-full font-medium hover:bg-gray-200"
+  >
+    Sign Up
+  </a>
+
+  <a
+    href="/register"
+    className="text-sm bg-blue-600 text-white px-4 py-2 rounded-full font-medium hover:bg-blue-700 transition"
+  >
+    List your business
+  </a>
+</div>
       </nav>
 
       <div className="bg-gradient-to-br from-blue-600 to-blue-800 text-white px-6 py-16 text-center">
